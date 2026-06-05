@@ -1,4 +1,4 @@
-const PUBLIC_GIST_ID = "40932f1a155e19e95477628e8e2ed4ea";
+const RAW_REPORTS_URL = "https://gist.githubusercontent.com/Nansen629/40932f1a155e19e95477628e8e2ed4ea/reports.json";
 
 let allReports = [];
 let currentReport = null;
@@ -152,59 +152,28 @@ function renderDetail(report) {
   document.getElementById("aiPromotion").textContent = normalizeText(report.aiPromotion);
 }
 
+
 async function loadReports() {
   try {
     setEmptyText("正在加载记录...");
 
-    if (!PUBLIC_GIST_ID || PUBLIC_GIST_ID === "这里填你的GistID") {
-      throw new Error("请先在 app.js 第一行填写你的 Gist ID。");
-    }
-
-    const response = await fetch(
-      `https://api.github.com/gists/${PUBLIC_GIST_ID}?t=${Date.now()}`
-    );
+    const response = await fetch(`${RAW_REPORTS_URL}?t=${Date.now()}`, {
+      cache: "no-store"
+    });
 
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(`无法读取 Gist 数据：${response.status} ${text}`);
+      throw new Error(`无法读取 Gist Raw 数据：${response.status} ${text}`);
     }
 
-    const gist = await response.json();
-    const file = gist.files["reports.json"];
-
-    if (!file) {
-      throw new Error("Gist 中没有 reports.json 文件。");
-    }
-
-    const data = JSON.parse(file.content || "[]");
+    const data = await response.json();
     allReports = Array.isArray(data) ? data : [];
 
     renderList();
   } catch (error) {
     console.error(error);
-    setEmptyText(error.message || "加载失败，请检查 Gist 配置。");
+    setEmptyText(error.message || "加载失败，请检查 Gist Raw 链接。");
   }
-}
-
-if (typeFilter) {
-  typeFilter.addEventListener("change", renderList);
-}
-
-if (searchInput) {
-  searchInput.addEventListener("input", renderList);
-}
-
-if (copyBtn) {
-  copyBtn.addEventListener("click", async () => {
-    if (!currentReport) return;
-
-    await navigator.clipboard.writeText(buildReportText(currentReport));
-    copyBtn.textContent = "已复制";
-
-    setTimeout(() => {
-      copyBtn.textContent = "复制文本";
-    }, 1200);
-  });
 }
 
 loadReports();
