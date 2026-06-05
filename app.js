@@ -136,7 +136,7 @@ function renderDetail(report) {
   document.getElementById("aiPromotion").textContent = normalizeText(report.aiPromotion);
 }
 
-const PUBLIC_GIST_ID = "这里填你的GistID";
+const PUBLIC_GIST_ID = "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v";
 
 async function loadReports() {
   try {
