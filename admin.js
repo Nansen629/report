@@ -145,6 +145,17 @@ async function fetchReportsFromGist() {
 async function saveReportsToGist() {
   ensureGistConfig();
 
+  const payload = {
+    files: {
+      "reports.json": {
+        content: JSON.stringify(reports, null, 2)
+      }
+    }
+  };
+
+  console.log("准备写入 Gist：", gistId);
+  console.log("准备写入内容：", payload.files["reports.json"].content);
+
   const response = await fetch(`https://api.github.com/gists/${gistId}`, {
     method: "PATCH",
     headers: {
@@ -152,28 +163,39 @@ async function saveReportsToGist() {
       Accept: "application/vnd.github+json",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      files: {
-        "reports.json": {
-          content: JSON.stringify(reports, null, 2)
-        }
-      }
-    })
+    body: JSON.stringify(payload)
   });
 
+  const text = await response.text();
+
   if (!response.ok) {
-    const text = await response.text();
     throw new Error(`写入 Gist 失败：${response.status} ${text}`);
   }
-}
 
-function renderAdminList() {
-  adminRecordList.innerHTML = "";
-
-  if (reports.length === 0) {
-    adminRecordList.innerHTML = `<div class="empty-state">暂无记录</div>`;
-    return;
+  let result;
+  try {
+    result = JSON.parse(text);
+  } catch (error) {
+    throw new Error("写入后 GitHub 返回内容无法解析。");
   }
+
+  const file = result.files && result.files["reports.json"];
+  if (!file) {
+    throw new Error("写入后未在 Gist 返回结果中找到 reports.json。");
+  }
+
+  const savedContent = file.content || "";
+  const expectedContent = payload.files["reports.json"].content;
+
+  if (savedContent.trim() !== expectedContent.trim()) {
+    console.warn("写入内容与返回内容不完全一致。");
+    console.log("期望内容：", expectedContent);
+    console.log("返回内容：", savedContent);
+  }
+
+  console.log("Gist 写入成功：", result.html_url);
+  return result;
+}
 
   sortReports(reports).forEach((report) => {
     const item = document.createElement("div");
