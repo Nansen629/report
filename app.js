@@ -1,4 +1,4 @@
-const RAW_REPORTS_URL = "https://gist.githubusercontent.com/Nansen629/40932f1a155e19e95477628e8e2ed4ea/reports.json";
+const RAW_REPORTS_URL = "https://gist.githubusercontent.com/Nansen629/40932f1a155e19e95477628e8e2ed4ea/raw/0596766c6cb77a0fc1eb37fb5f8d9bbfb8e48be8/reports.json";
 
 let allReports = [];
 let currentReport = null;
