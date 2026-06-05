@@ -376,25 +376,37 @@ async function init() {
   }
 }
 
-typeEl.addEventListener("change", () => {
+function safeBind(element, eventName, handler, name) {
+  if (!element) {
+    console.warn(`未找到页面元素：${name}`);
+    if (statusEl) {
+      statusEl.textContent = `页面元素缺失：${name}，请检查 admin.html。`;
+    }
+    return;
+  }
+
+  element.addEventListener(eventName, handler);
+}
+
+safeBind(typeEl, "change", () => {
   updateLabels();
   titleEl.value = getDefaultTitle();
-});
+}, "type");
 
-dateEl.addEventListener("change", () => {
+safeBind(dateEl, "change", () => {
   titleEl.value = getDefaultTitle();
-});
+}, "date");
 
-authorEl.addEventListener("input", () => {
+safeBind(authorEl, "input", () => {
   localStorage.setItem("report-author", authorEl.value);
   titleEl.value = getDefaultTitle();
-});
+}, "author");
 
-saveBtn.addEventListener("click", handleSave);
-deleteBtn.addEventListener("click", handleDelete);
-newBtn.addEventListener("click", clearForm);
+safeBind(saveBtn, "click", handleSave, "saveBtn");
+safeBind(deleteBtn, "click", handleDelete, "deleteBtn");
+safeBind(newBtn, "click", clearForm, "newBtn");
 
-reloadBtn.addEventListener("click", async () => {
+safeBind(reloadBtn, "click", async () => {
   try {
     setStatus("正在刷新数据...");
     await fetchReportsFromGithub();
@@ -404,12 +416,12 @@ reloadBtn.addEventListener("click", async () => {
     alert(error.message);
     setStatus("刷新失败。");
   }
-});
+}, "reloadBtn");
 
-copyTextBtn.addEventListener("click", async () => {
+safeBind(copyTextBtn, "click", async () => {
   const data = collectFormData();
   await navigator.clipboard.writeText(buildReportText(data));
   setStatus("已复制当前文本。");
-});
+}, "copyTextBtn");
 
 init();
