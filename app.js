@@ -136,15 +136,24 @@ function renderDetail(report) {
   document.getElementById("aiPromotion").textContent = normalizeText(report.aiPromotion);
 }
 
+const PUBLIC_GIST_ID = "这里填你的GistID";
+
 async function loadReports() {
   try {
-    const response = await fetch(`./reports.json?t=${Date.now()}`);
+    const response = await fetch(`https://api.github.com/gists/${PUBLIC_GIST_ID}?t=${Date.now()}`);
 
     if (!response.ok) {
-      throw new Error("无法读取 reports.json");
+      throw new Error("无法读取 Gist 数据");
     }
 
-    const data = await response.json();
+    const gist = await response.json();
+    const file = gist.files["reports.json"];
+
+    if (!file) {
+      throw new Error("Gist 中没有 reports.json 文件");
+    }
+
+    const data = JSON.parse(file.content || "[]");
     allReports = Array.isArray(data) ? data : [];
 
     renderList();
@@ -152,22 +161,6 @@ async function loadReports() {
     console.error(error);
     emptyState.classList.remove("hidden");
     detailContent.classList.add("hidden");
-    emptyState.textContent = "加载失败，请检查 reports.json 是否存在且格式正确。";
+    emptyState.textContent = "加载失败，请检查 Gist ID 是否正确。";
   }
 }
-
-typeFilter.addEventListener("change", renderList);
-searchInput.addEventListener("input", renderList);
-
-copyBtn.addEventListener("click", async () => {
-  if (!currentReport) return;
-
-  await navigator.clipboard.writeText(buildReportText(currentReport));
-  copyBtn.textContent = "已复制";
-
-  setTimeout(() => {
-    copyBtn.textContent = "复制文本";
-  }, 1200);
-});
-
-loadReports();
