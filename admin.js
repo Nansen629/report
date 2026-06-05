@@ -4,8 +4,7 @@ const GITHUB_CONFIG = {
   repo: "report",
   branch: "main",
   path: "reports.json",
-  token: "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"
-};
+  token: "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"};
 
 let reports = [];
 let currentId = null;
