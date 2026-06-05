@@ -312,14 +312,23 @@ async function handleSave() {
     setStatus("正在保存到 Gist...");
     await saveReportsToGist();
 
+    setStatus("正在复查 Gist 写入结果...");
+    await fetchReportsFromGist();
+
+    const saved = reports.find((item) => item.id === data.id);
+
+    if (!saved) {
+      throw new Error("保存后复查失败：Gist 中没有找到刚刚保存的记录。");
+    }
+
     currentId = data.id;
     renderAdminList();
 
-    setStatus("保存成功，已同步到 Gist。导师页刷新后即可看到。");
+    setStatus("保存成功，已确认写入 Gist。导师页刷新后即可看到。");
   } catch (error) {
     console.error(error);
     alert(error.message);
-    setStatus("保存失败，请检查 Gist ID 和 Token。");
+    setStatus("保存失败，请检查 Gist ID、Token 权限或控制台报错。");
   } finally {
     saveBtn.disabled = false;
   }
