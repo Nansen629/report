@@ -1,4 +1,3 @@
-js
 alert("admin.js 已加载");
 const GITHUB_CONFIG = {
   owner: "Nansen629",
