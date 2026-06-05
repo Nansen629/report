@@ -344,3 +344,18 @@ select:focus {
     grid-template-columns: 1fr;
   }
 }
+.admin-actions > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+#saveBtn {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: #111111 !important;
+  color: #ffffff !important;
+  border-color: #111111 !important;
+}
