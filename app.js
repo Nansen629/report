@@ -136,7 +136,7 @@ function renderDetail(report) {
   document.getElementById("aiPromotion").textContent = normalizeText(report.aiPromotion);
 }
 
-const PUBLIC_GIST_ID = "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v";
+const PUBLIC_GIST_ID = "40932f1a155e19e95477628e8e2ed4ea";
 
 async function loadReports() {
   try {
