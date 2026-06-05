@@ -1,10 +1,11 @@
 alert("admin.js 已加载");
 const GITHUB_CONFIG = {
-  owner: "Nansen629",
+  owner: "nansen629",
   repo: "report",
   branch: "main",
   path: "reports.json",
-  token: "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"};
+  token: "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"
+};
 
 let reports = [];
 let currentId = null;
