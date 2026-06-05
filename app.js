@@ -1,4 +1,5 @@
-js
+const PUBLIC_GIST_ID = "40932f1a155e19e95477628e8e2ed4ea";
+
 let allReports = [];
 let currentReport = null;
 
@@ -8,6 +9,17 @@ const recordList = document.getElementById("recordList");
 const emptyState = document.getElementById("emptyState");
 const detailContent = document.getElementById("detailContent");
 const copyBtn = document.getElementById("copyBtn");
+
+function setEmptyText(text) {
+  if (emptyState) {
+    emptyState.textContent = text;
+    emptyState.classList.remove("hidden");
+  }
+
+  if (detailContent) {
+    detailContent.classList.add("hidden");
+  }
+}
 
 function formatType(type) {
   return type === "daily" ? "日报" : "周报";
@@ -48,8 +60,8 @@ ${normalizeText(report.aiPromotion)}`;
 }
 
 function getFilteredReports() {
-  const type = typeFilter.value;
-  const keyword = searchInput.value.trim().toLowerCase();
+  const type = typeFilter ? typeFilter.value : "all";
+  const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
   return sortReports(allReports).filter((report) => {
     const matchType = type === "all" || report.type === type;
@@ -73,6 +85,12 @@ function getFilteredReports() {
 
 function renderList() {
   const reports = getFilteredReports();
+
+  if (!recordList) {
+    setEmptyText("页面结构异常：没有找到历史记录列表。");
+    return;
+  }
+
   recordList.innerHTML = "";
 
   if (reports.length === 0) {
@@ -108,9 +126,7 @@ function renderDetail(report) {
   currentReport = report;
 
   if (!report) {
-    emptyState.classList.remove("hidden");
-    detailContent.classList.add("hidden");
-    emptyState.textContent = "暂无日报/周报记录";
+    setEmptyText("暂无日报/周报记录");
     return;
   }
 
@@ -136,21 +152,28 @@ function renderDetail(report) {
   document.getElementById("aiPromotion").textContent = normalizeText(report.aiPromotion);
 }
 
-const PUBLIC_GIST_ID = "40932f1a155e19e95477628e8e2ed4ea";
-
 async function loadReports() {
   try {
-    const response = await fetch(`https://api.github.com/gists/${PUBLIC_GIST_ID}?t=${Date.now()}`);
+    setEmptyText("正在加载记录...");
+
+    if (!PUBLIC_GIST_ID || PUBLIC_GIST_ID === "这里填你的GistID") {
+      throw new Error("请先在 app.js 第一行填写你的 Gist ID。");
+    }
+
+    const response = await fetch(
+      `https://api.github.com/gists/${PUBLIC_GIST_ID}?t=${Date.now()}`
+    );
 
     if (!response.ok) {
-      throw new Error("无法读取 Gist 数据");
+      const text = await response.text();
+      throw new Error(`无法读取 Gist 数据：${response.status} ${text}`);
     }
 
     const gist = await response.json();
     const file = gist.files["reports.json"];
 
     if (!file) {
-      throw new Error("Gist 中没有 reports.json 文件");
+      throw new Error("Gist 中没有 reports.json 文件。");
     }
 
     const data = JSON.parse(file.content || "[]");
@@ -159,8 +182,29 @@ async function loadReports() {
     renderList();
   } catch (error) {
     console.error(error);
-    emptyState.classList.remove("hidden");
-    detailContent.classList.add("hidden");
-    emptyState.textContent = "加载失败，请检查 Gist ID 是否正确。";
+    setEmptyText(error.message || "加载失败，请检查 Gist 配置。");
   }
 }
+
+if (typeFilter) {
+  typeFilter.addEventListener("change", renderList);
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", renderList);
+}
+
+if (copyBtn) {
+  copyBtn.addEventListener("click", async () => {
+    if (!currentReport) return;
+
+    await navigator.clipboard.writeText(buildReportText(currentReport));
+    copyBtn.textContent = "已复制";
+
+    setTimeout(() => {
+      copyBtn.textContent = "复制文本";
+    }, 1200);
+  });
+}
+
+loadReports();
