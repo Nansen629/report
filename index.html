@@ -1,0 +1,73 @@
+html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>日报 / 周报查看</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <h1>日报 / 周报记录</h1>
+        <p>按时间倒序展示全部日报与周报。</p>
+      </div>
+
+      <div class="actions">
+        <select id="typeFilter">
+          <option value="all">全部</option>
+          <option value="weekly">周报</option>
+          <option value="daily">日报</option>
+        </select>
+        <input id="searchInput" type="search" placeholder="搜索关键词" />
+      </div>
+    </header>
+
+    <section class="layout">
+      <aside class="list-panel">
+        <div class="panel-title">历史记录</div>
+        <div id="recordList" class="record-list"></div>
+      </aside>
+
+      <article class="detail-panel">
+        <div id="emptyState" class="empty-state">正在加载记录...</div>
+
+        <div id="detailContent" class="detail-content hidden">
+          <div class="detail-header">
+            <div>
+              <div id="detailType" class="badge"></div>
+              <h2 id="detailTitle"></h2>
+              <p id="detailDate"></p>
+            </div>
+            <button id="copyBtn">复制文本</button>
+          </div>
+
+          <section>
+            <h3 id="overviewTitle">一、本周工作概述</h3>
+            <div id="overview" class="content-block"></div>
+          </section>
+
+          <section>
+            <h3 id="reviewTitle">二、本周复盘与收获</h3>
+            <div id="review" class="content-block"></div>
+          </section>
+
+          <section>
+            <h3 id="nextWorkTitle">三、下周待开展工作</h3>
+            <div id="nextWork" class="content-block"></div>
+          </section>
+
+          <section>
+            <h3>四、AI for 宣发</h3>
+            <div id="aiPromotion" class="content-block"></div>
+          </section>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

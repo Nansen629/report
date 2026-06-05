@@ -1,0 +1,91 @@
+html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>填写日报 / 周报</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <h1>填写日报 / 周报</h1>
+        <p>填写后点击保存，会自动同步到 GitHub 的 reports.json。</p>
+      </div>
+
+      <div class="actions">
+        <a class="link-button" href="./index.html" target="_blank">查看导师页</a>
+        <button id="reloadBtn">刷新数据</button>
+      </div>
+    </header>
+
+    <section class="admin-layout">
+      <aside class="list-panel">
+        <div class="panel-title">已有记录</div>
+        <div id="adminRecordList" class="record-list"></div>
+      </aside>
+
+      <section class="form-panel">
+        <div class="form-grid">
+          <label>
+            类型
+            <select id="type">
+              <option value="weekly">周报</option>
+              <option value="daily">日报</option>
+            </select>
+          </label>
+
+          <label>
+            日期
+            <input id="date" type="date" />
+          </label>
+
+          <label>
+            姓名 / 昵称
+            <input id="author" type="text" placeholder="例如：阿吞" />
+          </label>
+
+          <label>
+            标题
+            <input id="title" type="text" placeholder="会自动生成，也可以手动修改" />
+          </label>
+        </div>
+
+        <label class="textarea-label">
+          <span id="overviewLabel">一、本周工作概述</span>
+          <textarea id="overviewInput" placeholder="详细说明本周/今日工作细项、参与了什么工作、有什么产物、推进到了什么阶段。"></textarea>
+        </label>
+
+        <label class="textarea-label">
+          <span id="reviewLabel">二、本周复盘与收获</span>
+          <textarea id="reviewInput" placeholder="用大白话写踩坑、收获、工作流上的小故事。"></textarea>
+        </label>
+
+        <label class="textarea-label">
+          <span id="nextWorkLabel">三、下周待开展工作 & 一句话思路</span>
+          <textarea id="nextWorkInput" placeholder="编号列出来，一条一个要做的事，带一句比较短的说明。"></textarea>
+        </label>
+
+        <label class="textarea-label">
+          <span>四、AI for 宣发</span>
+          <textarea id="aiPromotionInput" placeholder="写可以给宣发提效的 AI 工具、工作流相关发现，事实、简短即可。"></textarea>
+        </label>
+
+        <div class="admin-actions">
+          <div id="status" class="status">准备就绪。</div>
+          <div>
+            <button id="newBtn">新建</button>
+            <button id="deleteBtn" class="danger">删除当前</button>
+            <button id="copyTextBtn">复制文本</button>
+            <button id="saveBtn" class="primary">保存并同步</button>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="./admin.js"></script>
+</body>
+</html>
